@@ -14,7 +14,3 @@ for (phase in x){
 }
 
 system('ffmpeg -i "plot_%05d.tiff" -r 24 -y animated.mp4')
-
-
-
-

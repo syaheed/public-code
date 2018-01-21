@@ -1,8 +1,3 @@
-# tetris
-# python C:\Users\Syaheed\Dropbox\Waterloo\tetris\tetris.py
-# python2 /home/syaheed/Dropbox/Waterloo/tetris/tetris.py
-
-
 # import libraries
 import pygame
 import sys

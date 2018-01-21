@@ -288,10 +288,3 @@ while retry == 1:
                         quitCheck()
                         if event.key == pygame.K_r:          
                             retry = 1
-
-
-
-
-
-
-

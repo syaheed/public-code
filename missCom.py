@@ -1,8 +1,3 @@
-# Missle Command
-# python C:\Users\Syaheed\Dropbox\Waterloo\missCom\missCom.py
-# python2 /usr/local/lab/protocol/missCom/missCom.py
-# python2 /home/syaheed/Dropbox/Waterloo/missCom/missCom.py
-
 # import libraries
 import pygame
 import sys

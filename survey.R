@@ -1,3 +1,4 @@
+# UI elements
 ui <- fluidPage(
   
   titlePanel("Sample Questionnaire"),
@@ -7,7 +8,9 @@ ui <- fluidPage(
 
     # Sidebar panel for inputs ----
     sidebarPanel(
-        helpText('Written by', a("Syaheed Jabar", href="https://syaheed.tech")), 
+        helpText('Written by', a("Syaheed Jabar.", href="http://syaheed.tech") , 'Code is available', a("here!", href="https://github.com/syaheed/public-code/blob/master/survey.R")), 
+        helpText('Output records down any responses or changes to responses that the participant makes (and the time of the clicks). ', a("Sample output.", href="http://syaheed.tech:3838/apps/testData/surveyOutput.csv")), 
+        h1(""), # insert blank
         textInput("UserID", "ID:", "UserID") ,
         uiOutput("qNum"),
         tableOutput('table')
@@ -33,7 +36,6 @@ ui <- fluidPage(
 
 
 # Server logic
-
 server <- function(input, output) {
 
 	writeRow <- function(data,filename){

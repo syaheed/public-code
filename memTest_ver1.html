@@ -1,0 +1,345 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>MemColor Test</title>
+  </head>
+<body>
+        <canvas id="canvas" width="1920" height="1080">
+         If you can see this, your browser does not support Canvas
+        </canvas>
+<script>
+
+document.body.style.backgroundColor = "black"; // set background of whole page
+
+// Expt parameters
+var numTrials = 100; //total number of trials
+const colSaturation = 0.5; // controls color saturaion
+const colLightness = 0.5; // controls color lightness
+const durITI = 500; // ITI duration in ms
+const durStim = 400; // Stim duration in ms
+const durMem = 2000; // memory delay duration in ms
+
+// Stimulus sizing. Should scale this somehow, but we have no clue what the monitor size is or how far people are away from it
+const fixSize = 10;
+const tgtOutline = 3;
+const tgtDist = 200;
+const tgtDotSize = 30;
+const cenDotSize = 30;
+const ringThickness = 10;
+const ringRadius = 42;
+
+// Screen/Timing settings
+const exptStart = Date.now();
+const durPerFrame = 1000/60; // frame timing not really all that accurate, better to use the datetime technique
+const scrWidth = window.screen.width; // method to get screen px
+const scrHeight = window.screen.height; 
+const pageWidth  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; // get the page size, which typically is smaller than the screen
+const pageHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
+const pageXcen = pageWidth / 2; // seems better to define the center from the page than from the screen
+const pageYcen = pageHeight / 2;
+
+// This is just to initialise stuff
+var canvas;  
+var ctx;
+var mousePosX = 0;
+var mousePosY = 0;
+var theta = 180;
+var mouseDist = 100;
+var mouseButton = -1;
+var resp = 0;
+var currTime = Date.now();
+var trialStart = Date.now();
+var trialClock = 0;
+var trialNum = 0; // current trial number0
+var tgtSel = 1;
+var tgtXPos = 0;
+var tgtYPos = 0;
+var currCol = "white";
+var error = -999;
+var estimate = -999;
+var pts = 0;
+var totalPts = 0;		
+
+//Prepare the 5 target locations
+var tgtXPosList = []; var tgtYPosList = [];
+for (i = 0; i < 5; i++) {
+	tgtXPosList[i] = tgtDist * Math.cos(deg2rad(respCheck(270 + 72*i))) + pageXcen;
+	tgtYPosList[i] = tgtDist * Math.sin(deg2rad(respCheck(270 + 72*i))) + pageYcen;
+}
+
+//Prepare the 5 target colors
+var tgt1ColList = []; var tgt2ColList = []; var tgt3ColList = []; var tgt4ColList = []; var tgt5ColList = [];
+var tgt1HexList = []; var tgt2HexList = []; var tgt3HexList = []; var tgt4HexList = []; var tgt5HexList = [];
+for (i = 0; i < numTrials; i++) {
+	tgt1ColList[i] = Math.ceil(Math.random() * 360); tgt2ColList[i] = Math.ceil(Math.random() * 360); tgt3ColList[i] = Math.ceil(Math.random() * 360); tgt4ColList[i] = Math.ceil(Math.random() * 360); tgt5ColList[i] = Math.ceil(Math.random() * 360);
+	tgt1HexList[i] = hsl2hex((tgt1ColList[i])/360, colSaturation, colLightness); tgt2HexList[i] = hsl2hex((tgt2ColList[i])/360, colSaturation, colLightness); tgt3HexList[i] = hsl2hex((tgt3ColList[i])/360, colSaturation, colLightness); tgt4HexList[i] = hsl2hex((tgt4ColList[i])/360, colSaturation, colLightness); tgt5HexList[i] = hsl2hex((tgt5ColList[i])/360, colSaturation, colLightness);
+	} 
+
+//Prepare the colors for the 'color rings'
+var ringXPosList = [];
+var ringYPosList = [];
+var ringHexList = [];
+for (i = 0; i < 360; i++) {
+	ringXPosList[i] = ringRadius * Math.cos(deg2rad(i)) + pageXcen;
+	ringYPosList[i] = ringRadius * Math.sin(deg2rad(i)) + pageYcen;
+	ringHexList[i] = hsl2hex((i+1)/360, colSaturation, colLightness);
+	} 
+
+//Prepare list of which location is selected
+var tgtSelList = [];
+for (i = 0; i < numTrials; i++) {
+	tgtSelList[i] = Math.ceil(Math.random() * 5);
+	} 
+
+// Main prog that runs the 'animation'/frame loop
+init();
+function main() {
+if (trialNum == 0){runStart();}  
+if (trialNum <= numTrials && trialNum > 0){runTrial();} 
+if (trialNum > numTrials){runEnd();}
+}
+  
+// // This controls the sequence of phases within a trial
+function runTrial() {
+  currTime = Date.now();
+  trialClock = currTime - trialStart;
+  if (trialClock <= durITI){phaseBlank();}
+  if (trialClock > durITI && trialClock <= durITI+durStim){phaseStim();}  
+  if (trialClock > durITI+durStim && trialClock <= durITI+durStim+durMem){phaseMem();}    
+  if (trialClock > durITI+durStim+durMem && resp == 0){phaseResp();}  
+  if (trialClock > durITI+durStim+durMem && resp == 1){phaseFeed();}
+}
+
+function runStart() {
+  reset();
+  
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "white";
+  
+  ctx.fillText("Welcome to MemTest! This version has 100 trials.", 40, 60);
+  ctx.fillText("On each trial, you need to remember the five colors that are shown, and their corresponding locations.", 40, 140);   
+  ctx.fillText("After the color ring appears, use the mouse to select the color that you think was in the cued location.", 40, 180);
+  ctx.fillText("After each response, bring the mouse over to the central white circle to continue.", 40, 220);   
+  ctx.fillText("Click on the white circle to begin.", 40, 300); 
+  
+  circle(pageXcen,pageYcen,tgtDotSize/2,"white");
+  onmousemove = function(e){mousePosX = e.clientX; mousePosY = e.clientY; return (mousePosX, mousePosY);}
+  onmousedown = function(e){mouseButton = e.button; return (mouseButton);} // this is a function built in for mouse-handling  
+  mouseDist = ((mousePosY - pageYcen)**2 + (mousePosX - pageXcen)**2) ** 0.5 ; 
+  if (mouseDist <= tgtDotSize/2 && mouseButton == 0){
+	resp = 0; 
+	trialStart = Date.now(); 
+	trialNum = trialNum + 1;
+	mouseButton = -1;
+	}  
+}
+
+
+function runEnd() {
+  reset();
+}
+
+function drawPlaceholders() {
+  reset();
+  for (i = 0; i < 5; i++) { 
+  circleOutline(tgtXPosList[i], tgtYPosList[i], tgtDotSize, tgtOutline);
+ }
+}
+
+function phaseStim() {
+  drawPlaceholders();
+  fixCross(pageXcen,pageYcen,fixSize,tgtOutline);  
+  for (i = 0; i < 5; i++) { 
+      t1 = tgt1HexList[trialNum-1]; t2 = tgt2HexList[trialNum-1]; t3 = tgt3HexList[trialNum-1]; t4 = tgt4HexList[trialNum-1]; t5 = tgt5HexList[trialNum-1];
+	  targetCols = [t1,t2,t3,t4,t5];  	  
+	  circle(tgtXPosList[i], tgtYPosList[i], tgtDotSize, targetCols[i]);
+ }  
+}
+
+function phaseBlank() { 
+  tgtSel = tgtSelList[trialNum-1];
+  tgtXPos = tgtXPosList[tgtSel-1] - pageXcen;
+  tgtYPos = tgtYPosList[tgtSel-1] - pageYcen;  
+  drawPlaceholders();
+  fixCross(pageXcen,pageYcen,fixSize,tgtOutline);  
+}
+
+function phaseMem() { 
+   drawPlaceholders();
+   fixCross(pageXcen,pageYcen,fixSize,tgtOutline);
+}
+  
+  
+function phaseResp() {
+  drawPlaceholders();
+  fixCross(pageXcen,pageYcen,fixSize,tgtOutline); 
+  drawRespRing();
+	if (mouseDist > ringRadius-ringThickness && mouseDist < ringRadius+ringThickness*4){
+	  currCol = ringHexList[theta-1];   // central
+	  } else {
+		currCol = 'white';
+	  }
+   circle(tgtXPos+pageXcen, tgtYPos+pageYcen, tgtDotSize, currCol);
+
+   // enable the below for "cheat mode";
+   //c1 = tgt1HexList[trialNum-1] ; c2 = tgt2ColList[trialNum-1] ; c3 = tgt3HexList[trialNum-1] ; c4 = tgt4HexList[trialNum-1] ; c5 = tgt5HexList[trialNum-1] ;  
+   //clist = [c1,c2,c3,c4,c5]; actualHex = clist[tgtSel-1];  
+   //circle(tgtXPos+pageXcen, tgtYPos+pageYcen, tgtDotSize/4, actualHex);
+   
+   onmousemove = function(e){mousePosX = e.clientX; mousePosY = e.clientY; return (mousePosX, mousePosY);} // this is a function built in for mouse-handling
+   onmousedown = function(e){mouseButton = e.button; return (mouseButton);} // this is a function built in for mouse-handling
+		if (mouseButton == 0 && mouseDist > ringRadius-ringThickness*2 && mouseDist < ringRadius+ringThickness*4){
+			resp = 1; mouseButton = -1;	estimate = theta; 
+			t1 = tgt1ColList[trialNum-1] ; t2 = tgt2ColList[trialNum-1] ; t3 = tgt3ColList[trialNum-1] ; t4 = tgt4ColList[trialNum-1] ; t5 = tgt5ColList[trialNum-1] ;  
+			targets = [t1,t2,t3,t4,t5];
+			error = errorCheck(targets[tgtSel-1] - estimate);
+			pts = 180 - Math.abs(error);
+			totalPts = totalPts + pts;
+		}
+  mouseButton = -1;
+  theta = respCheck(Math.round(rad2deg(Math.atan2(mousePosY - tgtYPos - pageYcen, mousePosX - tgtXPos - pageXcen))));
+  mouseDist = ((mousePosY - tgtYPos - pageYcen)**2 + (mousePosX - tgtXPos - pageXcen)**2) ** 0.5 ;
+}
+
+function phaseFeed() { 
+
+  var str1 = "+ " + pts + " pts";
+  var str2 = "Total: " + totalPts + " pts";  
+  
+   onmousemove = function(e){mousePosX = e.clientX; mousePosY = e.clientY; return (mousePosX, mousePosY);}
+   mouseDist = ((mousePosY - pageYcen)**2 + (mousePosX - pageXcen)**2) ** 0.5 ; 
+   if (mouseDist <= tgtDotSize/2){resp = 0; trialStart = Date.now(); trialNum = trialNum + 1; estimate = -999; error = -999;}
+   drawPlaceholders();
+   circle(pageXcen,pageYcen,tgtDotSize/2,"white");  
+
+   ctx.font = "20px Arial";
+   ctx.fillStyle = "white";
+   ctx.fillText(str1, pageXcen-40, pageYcen-30);
+   ctx.fillText(str2, pageXcen-50, pageYcen+50);
+		
+   // and also save whatever   
+}
+  
+
+function respCheck(theta) {
+  if (theta <= 0){ 
+	theta = theta + 360;
+  } 
+ if (theta > 360){ 
+	theta = theta - 360;
+  }   
+  return theta
+}
+
+function errorCheck(theta) {
+  if (theta <= -180){ 
+	theta = theta + 360;
+  } 
+ if (theta > 180){ 
+	theta = theta - 360;
+  }   
+  return theta
+}
+
+function drawRespRing() {
+  for (i = 0; i < 360; i += 4) { // jumping numbers to save a bit of compute time
+	  ctx.beginPath();  
+	  ctx.strokeStyle = ringHexList[i];
+	  ctx.lineWidth = ringThickness*2;
+	  ctx.arc(pageXcen + tgtXPos, pageYcen + tgtYPos, ringRadius, (i-2)*Math.PI/180, (i+2)*Math.PI/180, false);
+	  ctx.stroke();
+  }
+}
+
+function circle(x,y,r,c) {
+  ctx.beginPath();
+  ctx.fillStyle = c;  
+  ctx.arc(x, y, r, 0, Math.PI*2, true);
+  ctx.fill();
+}
+
+function circleOutline(x,y,r,w) {
+  ctx.beginPath();
+  ctx.strokeStyle = "grey";  
+  ctx.arc(x, y, r, 0, Math.PI*2, true);
+  ctx.lineWidth = w;  
+  ctx.stroke();
+}
+
+function rect(x,y,w,h) {
+  ctx.beginPath();
+  ctx.rect(x,y,w,h);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function fixCross(x,y,r,w) {
+  ctx.beginPath();
+  ctx.strokeStyle = "white";  
+  ctx.lineWidth = w;   
+  ctx.moveTo(x - r, y);
+  ctx.lineTo(x + r, y);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.strokeStyle = "white";  
+  ctx.lineWidth = w;   
+  ctx.moveTo(x, y - r);
+  ctx.lineTo(x, y + r);
+  ctx.stroke();
+}
+
+function reset() {
+  ctx.clearRect(0, 0, pageWidth, pageHeight);
+  ctx.fillStyle = "black";
+  rect(0,0,pageWidth,pageHeight);  
+}
+
+
+function init() {
+  canvas = document.getElementById("canvas");
+  ctx = canvas.getContext("2d");
+  ctx.canvas.width  = window.innerWidth - 40; // remove scrolling capabilities
+  ctx.canvas.height = window.innerHeight - 40; // remove scrolling capabilities  
+  return setInterval(main, durPerFrame);
+}
+
+
+function deg2rad(deg){
+  return deg * (Math.PI/180);
+}
+
+function rad2deg(rad){
+  return rad * (180/Math.PI);
+}
+      
+
+function hsl2hex(h, s, l){ // this is to progammatically pick colors from a color space (convert from HSV to hex via RGB)
+    var r, g, b;
+        function hue2rgb(p, q, t){
+            if(t < 0) t += 1;
+            if(t > 1) t -= 1;
+            if(t < 1/6) return p + (q - p) * 6 * t;
+            if(t < 1/2) return q;
+            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        }
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = Math.round(255 * hue2rgb(p, q, h + 1/3));
+        g = Math.round(255 * hue2rgb(p, q, h));
+        b = Math.round(255 * hue2rgb(p, q, h - 1/3));
+		r = r.toString(16); g = g.toString(16); b = b.toString(16);
+		if (r.length == 1)
+			r = "0" + r;
+		if (g.length == 1)
+			g = "0" + g;
+		if (b.length == 1)
+			b = "0" + b;
+		return "#" + r + g + b;
+	}
+  
+</script>
+</body>
+</html>

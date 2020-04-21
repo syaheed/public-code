@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="UTF-8" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>MemColor Test</title>
   </head>
 <body>
@@ -13,7 +13,7 @@
 document.body.style.backgroundColor = "black"; // set background of whole page
 
 // Expt parameters
-var numTrials = 100; //total number of trials
+var numTrials = 10; //total number of trials
 const colSaturation = 0.5; // controls color saturaion
 const colLightness = 0.5; // controls color lightness
 const durITI = 500; // ITI duration in ms
@@ -59,7 +59,13 @@ var currCol = "white";
 var error = -999;
 var estimate = -999;
 var pts = 0;
-var totalPts = 0;		
+var totalPts = 0;
+var frame = 0;
+var str1 = "";
+var str2 = "";
+var addString = "";
+var desText = "";
+var dataString = "Trial,Stim1,Stim2,Stim3,Stim4,Stim5,TargetLoc,TargetCol,Estimate,Error,Pts,TotalPts";
 
 //Prepare the 5 target locations
 var tgtXPosList = []; var tgtYPosList = [];
@@ -117,7 +123,7 @@ function runStart() {
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
   
-  ctx.fillText("Welcome to MemTest! This version has 100 trials.", 40, 60);
+  ctx.fillText("Welcome to MemTest! This version has 10 trials.", 40, 60);
   ctx.fillText("On each trial, you need to remember the five colors that are shown, and their corresponding locations.", 40, 140);   
   ctx.fillText("After the color ring appears, use the mouse to select the color that you think was in the cued location.", 40, 180);
   ctx.fillText("After each response, bring the mouse over to the central white circle to continue.", 40, 220);   
@@ -137,7 +143,14 @@ function runStart() {
 
 
 function runEnd() {
-  reset();
+   if (frame == 0) {
+		document.body.style.background = "white";
+		if (canvas.parentNode != null){
+			canvas.parentNode.removeChild(canvas);
+		}
+		writeStuff();
+		frame = 1;
+  }
 }
 
 function drawPlaceholders() {
@@ -172,6 +185,13 @@ function phaseMem() {
   
   
 function phaseResp() {
+   if (frame == 0) {
+		c1 = tgt1HexList[trialNum-1] ; c2 = tgt2ColList[trialNum-1] ; c3 = tgt3HexList[trialNum-1] ; c4 = tgt4HexList[trialNum-1] ; c5 = tgt5HexList[trialNum-1] ;  
+		clist = [c1,c2,c3,c4,c5]; actualHex = clist[tgtSel-1];  
+		t1 = tgt1ColList[trialNum-1] ; t2 = tgt2ColList[trialNum-1] ; t3 = tgt3ColList[trialNum-1] ; t4 = tgt4ColList[trialNum-1] ; t5 = tgt5ColList[trialNum-1] ;  
+		targets = [t1,t2,t3,t4,t5];
+		frame = 1;
+  }
   drawPlaceholders();
   fixCross(pageXcen,pageYcen,fixSize,tgtOutline); 
   drawRespRing();
@@ -183,19 +203,16 @@ function phaseResp() {
    circle(tgtXPos+pageXcen, tgtYPos+pageYcen, tgtDotSize, currCol);
 
    // enable the below for "cheat mode";
-   //c1 = tgt1HexList[trialNum-1] ; c2 = tgt2ColList[trialNum-1] ; c3 = tgt3HexList[trialNum-1] ; c4 = tgt4HexList[trialNum-1] ; c5 = tgt5HexList[trialNum-1] ;  
-   //clist = [c1,c2,c3,c4,c5]; actualHex = clist[tgtSel-1];  
    //circle(tgtXPos+pageXcen, tgtYPos+pageYcen, tgtDotSize/4, actualHex);
    
    onmousemove = function(e){mousePosX = e.clientX; mousePosY = e.clientY; return (mousePosX, mousePosY);} // this is a function built in for mouse-handling
    onmousedown = function(e){mouseButton = e.button; return (mouseButton);} // this is a function built in for mouse-handling
 		if (mouseButton == 0 && mouseDist > ringRadius-ringThickness*2 && mouseDist < ringRadius+ringThickness*4){
 			resp = 1; mouseButton = -1;	estimate = theta; 
-			t1 = tgt1ColList[trialNum-1] ; t2 = tgt2ColList[trialNum-1] ; t3 = tgt3ColList[trialNum-1] ; t4 = tgt4ColList[trialNum-1] ; t5 = tgt5ColList[trialNum-1] ;  
-			targets = [t1,t2,t3,t4,t5];
 			error = errorCheck(targets[tgtSel-1] - estimate);
 			pts = 180 - Math.abs(error);
 			totalPts = totalPts + pts;
+			frame = 0;
 		}
   mouseButton = -1;
   theta = respCheck(Math.round(rad2deg(Math.atan2(mousePosY - tgtYPos - pageYcen, mousePosX - tgtXPos - pageXcen))));
@@ -203,13 +220,19 @@ function phaseResp() {
 }
 
 function phaseFeed() { 
-
-  var str1 = "+ " + pts + " pts";
-  var str2 = "Total: " + totalPts + " pts";  
+   if (frame == 0) {
+	  str1 = "+ " + pts + " pts";
+	  str2 = "Total: " + totalPts + " pts";  
+	  
+	dataString = dataString + "\n" + trialNum + "," + t1 + "," + t2 + "," + t3 + "," + t4 + "," + t5 + "," + tgtSel + "," + targets[tgtSel-1]  + "," + estimate + "," + error + "," + pts + "," + totalPts ;   
+	//Trial,Stim1,Stim2,Stim3,Stim4,Stim5,TargetLoc,TargetCol,Estimate,Error,Pts,TotalPts
+	frame = 1;
+  }
   
    onmousemove = function(e){mousePosX = e.clientX; mousePosY = e.clientY; return (mousePosX, mousePosY);}
    mouseDist = ((mousePosY - pageYcen)**2 + (mousePosX - pageXcen)**2) ** 0.5 ; 
-   if (mouseDist <= tgtDotSize/2){resp = 0; trialStart = Date.now(); trialNum = trialNum + 1; estimate = -999; error = -999;}
+
+   if (mouseDist <= tgtDotSize/2){resp = 0; trialStart = Date.now(); trialNum = trialNum + 1; estimate = -999; error = -999; frame = 0;}
    drawPlaceholders();
    circle(pageXcen,pageYcen,tgtDotSize/2,"white");  
 
@@ -339,6 +362,49 @@ function hsl2hex(h, s, l){ // this is to progammatically pick colors from a colo
 			b = "0" + b;
 		return "#" + r + g + b;
 	}
+
+function writeStuff() {
+    var linebreak = document.createElement("BR");
+	
+	desText = document.createElement("p");
+	addString = document.createTextNode("This is the end of the experiment. Thank you for your participation.");
+	desText.appendChild(addString); document.body.appendChild(desText); 	
+
+	desText = document.createElement("p");
+	addString = document.createTextNode("BPlease download the below link and submit it to the researchers to get your credit/allowance."); // add link/email address? depends how the participant was recruited
+	desText.appendChild(addString); document.body.appendChild(desText); 
+
+    var textField = document.createElement("TEXTAREA"); 
+    //var dataText = document.createTextNode("This is the thing to download.\n This is the thing to download.\n This is the thing to download.\n This is the thing to download.\n This is the thing to download.\n This is the thing to download.\n");
+    var dataText = document.createTextNode(dataString);
+	textField.appendChild(dataText);
+	
+	// Uncomment below if you want the data to appear on the page itself.
+    //textField.readOnly = 1; 
+    //textField.cols = 100; 
+    //textField.rows = 10;   
+    //document.body.appendChild(textField); 
+  
+     var data = new Blob([textField.value], {type: 'text/plain;charset=UTF-8'});
+     textFileURL = window.URL.createObjectURL(data);
+     var downloadLink = document.createElement("a");
+
+     var linkText = document.createTextNode("Right click this link above save it as .csv file using your ID.");
+     downloadLink.appendChild(linebreak);
+     downloadLink.appendChild(linkText);
+     downloadLink.title = "Right click to download the data";
+     downloadLink.href = textFileURL;
+     document.body.appendChild(downloadLink);   
+
+	desText = document.createElement("p");
+	addString = document.createTextNode("For example, save as: memTest_xyz123.csv");
+	desText.appendChild(addString); document.body.appendChild(desText); 	
+	
+	desText = document.createElement("p");
+	addString = document.createTextNode("Please do not close this page before downloading, and please do not tamper with the downloaded file.");
+	desText.appendChild(addString); document.body.appendChild(desText); 
+}
+  
   
 </script>
 </body>

@@ -39,6 +39,23 @@ pairedTest = function(x1,x2, name = "Condition"){
   return(d)
 }
 
+pairedPlot = function(x1,x2, labels = c("x1","x2")){
+  # does a paired plot of x1 and x2, along with providing the t-test results in the title
+  cc = complete.cases(x1,x2); x1 = x1[cc]; x2 = x2[cc]
+  t = t.test(x1,x2,paired = TRUE); stat = paste0('t = ', round(t$estimate,3), ', p = ', round(t$p.value,3))                               
+  plot(-10,-10, xlim = c(0.5,2.5), ylim=c(min(c(x1,x2)),max(c(x1,x2))), xlab="", ylab="ZScore", main=stat, pch=16, cex=2, col = "blue", xaxt = "n")
+  abline(h = 0, lwd = 1, col = "green") ;
+  for (i in 1:length(x1)){
+    segments(1, x1[i], 2, x2[i], col = "grey", lwd = 1)
+  }
+  segments(1, mean(x1), 2, mean(x2), col = "black", lwd = 2)
+  points(1,mean(x1), pch=16, cex=2, col = "blue")
+  points(2,mean(x2), pch=16, cex=2, col = "red")
+  arrows(x0=1, y0=mean(x1) - sd(x1)/sqrt(length(x1)), x1=1, y1=mean(x1) + sd(x1)/sqrt(length(x1)), code=3, angle=90, length=0.1, col = "blue")
+  arrows(x0=2, y0=mean(x2) - sd(x2)/sqrt(length(x2)), x1=2, y1=mean(x2) + sd(x2)/sqrt(length(x2)), code=3, angle=90, length=0.1, col = "red")
+  axis(1, at = c(1, 2), labels = labels)
+}
+
 strClean = function(y){
   # to clean brackets and braces from some string
   y = gsub("\"", "", y)
@@ -70,7 +87,6 @@ findAngle = function(x2,y2,x1 = 0, y1 = 0){
 #dev.new() # open a new window for plot
 #par(mfrow=c(2,1)) # panels
 #par(mar=c(4,7,3,1)) # set margins
-
 #set.seed(15)
 #x = 1:100; y = dnorm(x, mean = 50, sd = 10) # data
 #plot(-10,10,xlim=c(min(x),max(x)), ylim=c(min(y)-0.02,max(y)+0.02), ylab="", cex.axis = 0.5,xlab ="", xaxt = "n", main = "Title", )
@@ -78,6 +94,7 @@ findAngle = function(x2,y2,x1 = 0, y1 = 0){
 #segments(x,0,x,y,lwd = 1, col = "grey") # faux bar plot
 #abline(v = 50, lwd = 3) ; abline(h = 00, lwd = 1, col = "grey") # vertical / horizontal lines
 #axis(1, at=x, labels=paste0('SD = ',(x-50)/10),las=3,cex.axis = 0.5)
+#pairedPlot(x1 = rnorm(30,-1,3), x2 = rnorm(30,1,3.2), labels = c("x1","x2"))
 
 # to plot and correlation matrix (corMat), and export to a jpeg
 #peg("./output.jpeg", width = 8, height = 8, units = 'in', res = 300)
@@ -97,6 +114,7 @@ findAngle = function(x2,y2,x1 = 0, y1 = 0){
 #axis(side=2, at=1:10, labels = rownames(corMat) , cex.axis = 1, font=2)
 #dev.off()
 
+
 ############ other how to's:
 
 #how to connect R to a postgresql:
@@ -115,7 +133,7 @@ findAngle = function(x2,y2,x1 = 0, y1 = 0){
 #dealing with timestamps
 #timestamp1 = as.POSIXct(1678192830, origin = '1970-01-01')
 #timestamp2 = as.POSIXct(1678198240, origin = '1970-01-01')
-#difftime(timestamp2,timestamp1,units = "mins")
+#diff_in_mins = as.numeric(difftime(timestamp2,timestamp1,units = "mins"))
 
 #ordering a data.frame
 #d = d[order(d$timestamp),]

@@ -12,6 +12,19 @@ rowsplit = function(x,column = 0, sp= "_"){
   if(column > 0){return(temp[,column])}
 }
 
+############ plot examples
+#dev.new() # open a new window for plot
+#par(mfrow=c(2,1)) # panels
+#par(mar=c(4,7,3,1)) # set margins
+
+#set.seed(15)
+#x = 1:100; y = dnorm(x, mean = 50, sd = 10)
+#plot(-10,10,xlim=c(min(x),max(x)), ylim=c(min(y)-0.02,max(y)+0.02), ylab="", cex.axis = 0.5,xlab ="", xaxt = "n", main = "Title", )
+#for(sim in 1:5){lines(x,y+rnorm(10,mean = 0, sd = 0.005), col = colors()[sample(length(colors()))[1]])} # lines
+#segments(x,0,x,y,lwd = 1, col = "grey") # faux bar plot
+#abline(v = 50, lwd = 3) ; abline(h = 00, lwd = 1, col = "grey") # vertical / horizontal lines
+#axis(1, at=x, labels=paste0('SD = ',(x-50)/10),las=3,cex.axis = 0.5)
+
 ############ other how to's:
 
 #how to connect R to a postgresql:

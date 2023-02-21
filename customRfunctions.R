@@ -59,7 +59,7 @@ euclid = function(x1,x2,y1,y2){
 
 findAngle = function(x2,y2,x1 = 0, y1 = 0){
   # find angle (degrees) between two points (x1,y1) vs (x2,y2). If x1 and y2 not specified, find angle from origin (0,0)
-  # this is using bearing, zero degrees is north, east is 90, south 180, south-west is 225 degrees. Wraps at 360 = 0 degrees
+  # 90 degrees is north, east is 0, south is 270, south-west is 225 degrees. Wraps at 360 = 0 degrees (east)
   angle = atan2(y2-y1,x2-x1) * 180/pi
   angle[angle < 0] = angle[angle < 0] + 360
   angle[angle > 360] = angle[angle > 360] - 360

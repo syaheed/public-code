@@ -12,13 +12,16 @@ rowsplit = function(x,column = 0, sp= "_"){
   if(column > 0){return(temp[,column])}
 }
 
-#other how to's:
+############ other how to's:
 
-# how to connect R to a postgresql:
+#how to connect R to a postgresql:
 #library(DBI)
 #con = dbConnect(RPostgres::Postgres(), dbname = 'a', host = 'b', port = 5432, user = 'user', password = 'pass')
 #query = "SELECT * FROM INFORMATION_SCHEMA.TABLES"; #tables = dbGetQuery(con, query)
 #query = "SELECT * FROM db.table WHERE somecolumn like 'pattern%'"; #d = dbGetQuery(con, query)
+
+#join data.frames by some ID column
+#d = merge(d1,d2,by="id", all = TRUE)
 
 #read json files
 #library(jsonlite)

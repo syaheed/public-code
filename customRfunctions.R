@@ -20,7 +20,6 @@ rowsplit = function(x,column = 0, sp= "_"){
 #query = "SELECT * FROM INFORMATION_SCHEMA.TABLES"; #tables = dbGetQuery(con, query)
 #query = "SELECT * FROM db.table WHERE somecolumn like 'pattern%'"; #d = dbGetQuery(con, query)
 
-
 #read json files
 #library(jsonlite)
 #read_json(file)
@@ -29,3 +28,6 @@ rowsplit = function(x,column = 0, sp= "_"){
 #timestamp1 = as.POSIXct(1678192830, origin = '1970-01-01')
 #timestamp2 = as.POSIXct(1678198240, origin = '1970-01-01')
 #difftime(timestamp2,timestamp1,units = "mins")
+
+#ordering a data.frame
+#d = d[order(d$timestamp),]

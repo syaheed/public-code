@@ -40,6 +40,32 @@ pairedTest = function(x1,x2, name = "Condition"){
 }
 
 
+strClean = function(y){
+  # to clean brackets and braces from some string
+  y = gsub("\"", "", y)
+  y = gsub("}", "", y)
+  y = gsub("[{]", "", y)
+  y = gsub("[[]", "", y)
+  y = gsub("[]]", "", y)
+  y = gsub('"', "", y)
+  return(y)
+}
+
+euclid = function(x1,x2,y1,y2){
+  # get euclidian / pythagorean distance between two points (x1,y1) vs (x2,y2)
+  z = (((x2 - x1)^2) + ((y2 - y1)^2))^0.5
+  return(z)
+}
+
+findAngle = function(x2,y2,x1 = 0, y1 = 0){
+  # find angle (degrees) between two points (x1,y1) vs (x2,y2). If x1 and y2 not specified, find angle from origin (0,0)
+  # this is using bearing, zero degrees is north, east is 90, south 180, south-west is 225 degrees. Wraps at 360 = 0 degrees
+  angle = atan2(y2-y1,x2-x1) * 180/pi
+  angle[angle < 0] = angle[angle < 0] + 360
+  angle[angle > 360] = angle[angle > 360] - 360
+  return(angle)
+}
+
 
 ############ plot examples
 #dev.new() # open a new window for plot

@@ -39,7 +39,6 @@ pairedTest = function(x1,x2, name = "Condition"){
   return(d)
 }
 
-
 strClean = function(y){
   # to clean brackets and braces from some string
   y = gsub("\"", "", y)

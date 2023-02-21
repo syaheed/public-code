@@ -17,8 +17,9 @@ rowsplit = function(x,column = 0, sp= "_"){
 # how to connect R to a postgresql:
 #library(DBI)
 #con = dbConnect(RPostgres::Postgres(), dbname = 'a', host = 'b', port = 5432, user = 'user', password = 'pass')
-#query = "SELECT * FROM INFORMATION_SCHEMA.TABLES"
-#d = dbGetQuery(con, query)
+#query = "SELECT * FROM INFORMATION_SCHEMA.TABLES"; #tables = dbGetQuery(con, query)
+#query = "SELECT * FROM db.table WHERE somecolumn like 'pattern%'"; #d = dbGetQuery(con, query)
+
 
 #read json files
 #library(jsonlite)

@@ -18,12 +18,30 @@ rowsplit = function(x,column = 0, sp= "_"){
 #par(mar=c(4,7,3,1)) # set margins
 
 #set.seed(15)
-#x = 1:100; y = dnorm(x, mean = 50, sd = 10)
+#x = 1:100; y = dnorm(x, mean = 50, sd = 10) # data
 #plot(-10,10,xlim=c(min(x),max(x)), ylim=c(min(y)-0.02,max(y)+0.02), ylab="", cex.axis = 0.5,xlab ="", xaxt = "n", main = "Title", )
 #for(sim in 1:5){lines(x,y+rnorm(10,mean = 0, sd = 0.005), col = colors()[sample(length(colors()))[1]])} # lines
 #segments(x,0,x,y,lwd = 1, col = "grey") # faux bar plot
 #abline(v = 50, lwd = 3) ; abline(h = 00, lwd = 1, col = "grey") # vertical / horizontal lines
 #axis(1, at=x, labels=paste0('SD = ',(x-50)/10),las=3,cex.axis = 0.5)
+
+# to plot and correlation matrix (corMat), and export to a jpeg
+#peg("./output.jpeg", width = 8, height = 8, units = 'in', res = 300)
+#par(las=2); par(mar=c(10,10,1,1))
+#colfunc = colorRampPalette(c("red","white","royalblue"))
+#x = seq(-1,1,0.01); colHex = colfunc(length(x))
+#corMat = matrix(runif(100, min = -1, max = 1), ncol = 10); rownames(corMat) = paste0('x',1:10); colnames(corMat) = paste0('x',1:10) #data
+#plot(-100,-100,xlim = c(1,10) , ylim = c(1,10), xlab = "", ylab = "", xaxt="n", yaxt="n")
+#for (i in 1:10){
+#  for (j in 1:10){
+#    colIdx = ((1+round(corMat[i,j],2)) / 0.01)+1    
+#    rect(i-0.5,j-0.5,i+0.5,j+0.5,col = colHex[colIdx])
+#    text(i,j,labels = round(corMat[i,j],2), cex = 1.0, col = "black")
+#  }
+#}
+#axis(side=1, at=1:10, labels = rownames(corMat) , cex.axis = 1, font=2)
+#axis(side=2, at=1:10, labels = rownames(corMat) , cex.axis = 1, font=2)
+#dev.off()
 
 ############ other how to's:
 

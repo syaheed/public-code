@@ -23,3 +23,8 @@ rowsplit = function(x,column = 0, sp= "_"){
 #read json files
 #library(jsonlite)
 #read_json(file)
+
+#dealing with timestamps
+#timestamp1 = as.POSIXct(1678192830, origin = '1970-01-01')
+#timestamp2 = as.POSIXct(1678198240, origin = '1970-01-01')
+#difftime(timestamp2,timestamp1,units = "mins")

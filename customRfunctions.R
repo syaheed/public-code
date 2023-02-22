@@ -135,5 +135,13 @@ findAngle = function(x2,y2,x1 = 0, y1 = 0){
 #timestamp2 = as.POSIXct(1678198240, origin = '1970-01-01')
 #diff_in_mins = as.numeric(difftime(timestamp2,timestamp1,units = "mins"))
 
-#ordering a data.frame
-#d = d[order(d$timestamp),]
+# how to use data.frames
+#data = data.frame(userID = c('s1','s2','s3'), score = c(100,95,82)) ## make a data.frame
+#data$score[data$userID == "s1"] # get a value of one column based on another
+#data[data$userID == "s2",] # return the whole row
+#data$score2 = NA # make a new empty column
+#data$score2[data$userID == "s3"] = 98 # update a data point
+#data = data[order(data$score),] #ordering a data.frame
+
+
+

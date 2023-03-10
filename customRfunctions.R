@@ -27,7 +27,7 @@ pairedTest = function(x1,x2, name = "Condition"){
   sd1 = sd(x1) ; sd2 = sd(x2)
   se1 = sd1/sqrt(n) ; se2 = se1/sqrt(n)
   wil = wilcox.test(x2, x1, paired = TRUE, exact=FALSE)
-  wv= wil$statistic  
+  wv = wil$statistic  
   wpval = wil$p.value  
   t = t.test(x2,x1, paired = TRUE, alternative = "two.sided")
   tstat = as.numeric(t$statistic)
@@ -82,6 +82,16 @@ findAngle = function(x2,y2,x1 = 0, y1 = 0){
   return(angle)
 }
 
+calcZT = function(raw_score,ref_mean = NA,ref_sd = NA){
+  # To calculate the zscore and percentiles of a set of scores (given some reference mean and sd, else, take sample statistics)
+  # use case 1 (with reference) : data = calcZT(rnorm(100, mean = 50, sd = 15), ref_mean = 50, ref_sd = 15)
+  # use case 2 (no reference) : data = calcZT(rnorm(100, mean = 50, sd = 15))
+  if (is.na(ref_mean)){ref_mean = mean(raw_score); ref_sd = sd(raw_score)}
+  z_score = (raw_score - ref_mean) / ref_sd
+  percentile = pnorm(z_score) * 100
+  data = data.frame(raw_score,round(z_score,3),round(percentile,1))
+  return(data)
+}
 
 ############ plot examples
 #dev.new() # open a new window for plot

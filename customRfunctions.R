@@ -18,7 +18,7 @@ pairedTest = function(x1,x2, name = "Condition"){
   #d1 = pairedTest(rnorm(30,0,1),rnorm(30,0,1),"case1")
   #d2 = pairedTest(rnorm(30,0,1),rnorm(30,2,1),"case2")
   #d = rbind(d1,d2)
-  require("BayesFactor"); require("effsize")
+  require("BayesFactor"); require("effsize"); require("pwr")
   cc = complete.cases(x1,x2)
   x1 = x1[cc] ; x2 = x2[cc]
   n = length(x1)

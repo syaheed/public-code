@@ -32,9 +32,12 @@ pairedTest = function(x1,x2, name = "Condition"){
   t = t.test(x2,x1, paired = TRUE, alternative = "two.sided")
   tstat = as.numeric(t$statistic)
   tpval = as.numeric(t$p.value)
+  cohenD = cohen.d(x2,x1, paired=TRUE, hedges.correction=FALSE)$estimate
   hedgeG = cohen.d(x2,x1, paired=TRUE, hedges.correction=TRUE)$estimate  
   BF = ttestBF(x2,x1,paired = TRUE) ; BF = as.vector(BF)[[1]]
-  d = data.frame(name,n,n_increase,n_decrease,m1,m2,sd1,sd2,se1,se2,tstat,tpval,wv,wpval,hedgeG,BF)
+  reqSample = pwr.t.test(n = NULL, d = d$estimate, sig.level = 0.05, power = 0.8, type = "paired", alternative = "two.sided")
+  power = pwr.t.test(n = length(x1), d = d$estimate, sig.level = 0.05, power = NULL, type = "paired", alternative = "two.sided")
+  d = data.frame(name,n,n_increase,n_decrease,m1,m2,sd1,sd2,se1,se2,tstat,tpval,wv,wpval,cohenD,hedgeG,power,reqSample,BF)
   rownames(d) = NULL
   return(d)
 }

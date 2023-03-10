@@ -89,7 +89,7 @@ calcZT = function(raw_score,ref_mean = NA,ref_sd = NA){
   if (is.na(ref_mean)){ref_mean = mean(raw_score); ref_sd = sd(raw_score)}
   z_score = (raw_score - ref_mean) / ref_sd
   percentile = pnorm(z_score) * 100
-  data = data.frame(raw_score,round(z_score,3),round(percentile,1))
+  data = data.frame(raw_score,z_score = round(z_score,3), percentile = round(percentile,1))
   return(data)
 }
 

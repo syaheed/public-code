@@ -96,6 +96,50 @@ calcZT = function(raw_score,ref_mean = NA,ref_sd = NA){
   return(data)
 }
 
+makeCorMat = function(data){
+  # make a correlation matrix. Assumes first column is excluded and all other columns indicate some variable
+  numFeatures = length(names(data)) - 1
+  corMat = matrix(NA,ncol = numFeatures, nrow = numFeatures)
+  colnames(corMat) = names(data)[1:13 + 1]
+  rownames(corMat) = names(data)[1:13 + 1]
+  for (i in 1:numFeatures){
+    for (j in 1:numFeatures){
+      corMat[i,j] = cor(data[,i+1],data[,j+1])
+    }
+  }
+  return(corMat)
+}
+
+corMap = function(corMat, patternMap = c("a","b","c","d","e")){
+  # plot the output of makeCorMat, e.g.:
+  #data = data.frame(index = 1:100) # # make correlation matrix
+  #for (i in 2:14){
+  #  data[,i] = rnorm(length(data$index),0,1)
+  #}
+  #names(data) = c("index","a1","a2","b1","b2","b3","c1","c2","d1","d2","d3","e1","e2","e3")
+  #corMat = makeCorMat(data)
+  #corMap(corMat)
+  rowNames = colnames(corMat)
+  numFeatures = length(rowNames)
+  par(las=2)
+  par(mar=c(1,1,1,1)) # adjust as needed
+  x = seq(-1,1,0.01)
+  colfunc = colorRampPalette(c("red","white","royalblue"))
+  colHex = colfunc(length(x))
+  plot(-100,-100,xlim = c(-2,numFeatures) , ylim = c(-2,numFeatures), xlab = "", ylab = "", xaxt="n", yaxt="n")
+  for (i in 1:numFeatures){
+    for (j in 1:numFeatures){
+      colIdx = ((1+round(corMat[i,j],2)) / 0.01)+1    
+      rect(i-0.5,j-0.5,i+0.5,j+0.5,col = colHex[colIdx])
+    }
+    if (length(grep(rowNames[i], pattern = patternMap[1]))>0){points(i,-0.2, col = 'black', pch = 19); points(-0.2,i, col = 'black', pch = 19);     text(i,-1,rowNames[i], col = 'black', srt = 90) ; text(-1,i,rowNames[i], col = 'black') }
+    if (length(grep(rowNames[i], pattern = patternMap[2]))>0){points(i,-0.2, col = 'orange', pch = 19); points(-0.2,i, col = 'orange', pch = 19);     text(i,-1,rowNames[i], col = 'orange', srt = 90); text(-1,i,rowNames[i], col = 'orange')  }
+    if (length(grep(rowNames[i], pattern = patternMap[3]))>0){points(i,-0.2, col = 'purple', pch = 19); points(-0.2,i, col = 'purple', pch = 19);     text(i,-1,rowNames[i], col = 'purple', srt = 90); text(-1,i,rowNames[i], col = 'purple')  }  
+    if (length(grep(rowNames[i], pattern = patternMap[4]))>0){points(i,-0.2, col = 'cyan', pch = 19); points(-0.2,i, col = 'cyan', pch = 19);     text(i,-1,rowNames[i], col = 'cyan', srt = 90); text(-1,i,rowNames[i], col = 'cyan')  }  
+    if (length(grep(rowNames[i], pattern = patternMap[5]))>0){points(i,-0.2, col = 'red', pch = 19); points(-0.2,i, col = 'red', pch = 19);     text(i,-1,rowNames[i], col = 'red', srt = 90); text(-1,i,rowNames[i], col = 'red')  }  
+ }
+}
+
 ############ plot examples
 #dev.new() # open a new window for plot
 #par(mfrow=c(2,1)) # panels

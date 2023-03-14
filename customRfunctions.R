@@ -1,5 +1,8 @@
 # This is just a function list / help page for things that I find myself using quite a bit.
 
+#rm(list=ls())
+#setwd("~/Desktop/")
+
 # how to use:
 #library(devtools)
 #source_url("https://raw.githubusercontent.com/syaheed/public-code/master/customRfunctions.R")

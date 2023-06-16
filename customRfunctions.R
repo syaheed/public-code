@@ -205,6 +205,16 @@ corMap = function(corMat, patternMap = c("a","b","c","d","e")){
 #dbGetQuery(con, "SELECT SL,SW FROM data WHERE Species = 'virginica' ") # select some columns based on some other column value
 #dbGetQuery(con, "SELECT SL,SW FROM data WHERE Species LIKE 'V%' ") # same as above, but filter based on pattern
 
+# AND / OR
+#dbGetQuery(con, "SELECT * FROM data WHERE PW > 0.5 OR  PL > 5.0")
+#dbGetQuery(con, "SELECT * FROM data WHERE PW > 0.5 AND  PL > 5.0")
+
+# SUM / minmax / count / avg
+#dbGetQuery(con, "SELECT COUNT(SW) FROM data WHERE PW > 0.5 OR  PL > 5.0")
+#dbGetQuery(con, "SELECT COUNT(SW) FROM data WHERE PW > 0.5 AND  PL > 5.0")
+#dbGetQuery(con, "SELECT MIN(SW),AVG(SW),MAX(SW) FROM data WHERE PW > 0.5 AND  PL > 5.0")
+#dbGetQuery(con, "SELECT AVG(SW) FROM data WHERE PW > 0.5 AND  PL > 5.0")
+
 # joining 2 tables based on some common attribute (e.g. data and speciesID both have a "Species" column)
 #dbGetQuery(con, "SELECT * FROM data INNER JOIN speciesID ON data.Species=speciesID.Species")
 #dbGetQuery(con, "SELECT data.SL,speciesID.sID FROM data INNER JOIN speciesID ON data.Species=speciesID.Species")

@@ -177,31 +177,57 @@ corMap = function(corMat, patternMap = c("a","b","c","d","e")){
 
 ############ other how to's:
 
-#how to connect R to a postgresql:
+####how to connect R to a postgresql:
 #library(DBI)
 #con = dbConnect(RPostgres::Postgres(), dbname = 'a', host = 'b', port = 5432, user = 'user', password = 'pass')
 #query = "SELECT * FROM INFORMATION_SCHEMA.TABLES"; #tables = dbGetQuery(con, query)
 #query = "SELECT * FROM db.table WHERE somecolumn like 'pattern%'"; #d = dbGetQuery(con, query)
 
-#join data.frames by some ID column
+####make a virtual SQL connection, some basic functionality from R
+#install.packages("RSQLite")
+#install.packages("DBI")
+#library(DBI)
+
+# Prep some data
+#data = iris
+#colnames(data) = c("SL","SW","PL","PW","Species") # give column names that sql works easily with
+#speciesID = data.frame(sID = 1:3, Species = unique(data$Species)) # a second table to give an id number to the species
+
+# make a sql server connection
+#con = dbConnect(RSQLite::SQLite(), dbname = ":memory:")
+#dbWriteTable(con, "data", data)
+#dbWriteTable(con, "speciesID", speciesID)
+#dbListTables(con) # just to check that we have 2 tables
+#rm(list = c("data", "speciesID")) # clear from memory the table
+
+# Basic selection
+#dbGetQuery(con, "SELECT * FROM data") # select all columns
+#dbGetQuery(con, "SELECT SL,SW FROM data WHERE Species = 'virginica' ") # select some columns based on some other column value
+#dbGetQuery(con, "SELECT SL,SW FROM data WHERE Species LIKE 'V%' ") # same as above, but filter based on pattern
+
+# joining 2 tables based on some common attribute (e.g. data and speciesID both have a "Species" column)
+#dbGetQuery(con, "SELECT * FROM data INNER JOIN speciesID ON data.Species=speciesID.Species")
+#dbGetQuery(con, "SELECT data.SL,speciesID.sID FROM data INNER JOIN speciesID ON data.Species=speciesID.Species")
+
+# End
+#dbDisconnect(con)
+
+####join data.frames by some ID column
 #d = merge(d1,d2,by="id", all = TRUE)
 
-#read json files
+####read json files
 #library(jsonlite)
 #read_json(file)
 
-#dealing with timestamps
+####dealing with timestamps
 #timestamp1 = as.POSIXct(1678192830, origin = '1970-01-01')
 #timestamp2 = as.POSIXct(1678198240, origin = '1970-01-01')
 #diff_in_mins = as.numeric(difftime(timestamp2,timestamp1,units = "mins"))
 
-# how to use data.frames
+####how to use data.frames
 #data = data.frame(userID = c('s1','s2','s3'), score = c(100,95,82)) ## make a data.frame
 #data$score[data$userID == "s1"] # get a value of one column based on another
 #data[data$userID == "s2",] # return the whole row
 #data$score2 = NA # make a new empty column
 #data$score2[data$userID == "s3"] = 98 # update a data point
 #data = data[order(data$score),] #ordering a data.frame
-
-
-

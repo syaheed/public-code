@@ -203,6 +203,7 @@ corMap = function(corMat, patternMap = c("a","b","c","d","e")){
 # Basic selection
 #dbGetQuery(con, "SELECT * FROM data") # select all columns
 #dbGetQuery(con, "SELECT SL,SW FROM data WHERE Species = 'virginica' ") # select some columns based on some other column value
+#dbGetQuery(con, "SELECT SL,SW FROM data WHERE Species != 'virginica' ") # a 'not' case
 #dbGetQuery(con, "SELECT SL,SW FROM data WHERE Species LIKE 'V%' ") # same as above, but filter based on pattern
 #dbGetQuery(con, "SELECT SL,SW FROM data WHERE Species IN ('setosa','virginica') ") # note the IN
 

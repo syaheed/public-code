@@ -219,7 +219,7 @@ corMap = function(corMat, patternMap = c("a","b","c","d","e")){
 #dbGetQuery(con, "SELECT MIN(SW),AVG(SW),MAX(SW) FROM data WHERE PW > 0.5 AND  PL > 5.0")
 #dbGetQuery(con, "SELECT AVG(SW) FROM data WHERE PW > 0.5 AND  PL > 5.0")
 #dbGetQuery(con, "SELECT AVG(SW)/AVG(SL) FROM data WHERE PW > 0.5 AND  PL > 5.0") #output a computation
-#dbGetQuery(con, "SELECT round(AVG(SL),2) FROM data WHERE PW > 0.5 AND  PL > 5.0") # round off to x dp
+#dbGetQuery(con, "SELECT round(AVG(SL),2) FROM data WHERE PW > 0.5 AND  PL > 5.0") # round off to x dp [negative numbers work too, eg -3 to round off to nearest 1000]
 
 # NULL case
 #dbGetQuery(con, "SELECT * FROM data WHERE PL is NULL")

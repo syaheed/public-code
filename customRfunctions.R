@@ -183,7 +183,7 @@ corMap = function(corMat, patternMap = c("a","b","c","d","e")){
 #query = "SELECT * FROM INFORMATION_SCHEMA.TABLES"; #tables = dbGetQuery(con, query)
 #query = "SELECT * FROM db.table WHERE somecolumn like 'pattern%'"; #d = dbGetQuery(con, query)
 
-####make a virtual SQL connection, some basic functionality from R
+####make a virtual SQL connection, some basic SQL functionality from R
 #install.packages("RSQLite")
 #install.packages("DBI")
 #library(DBI)
@@ -215,7 +215,15 @@ corMap = function(corMat, patternMap = c("a","b","c","d","e")){
 #dbGetQuery(con, "SELECT MIN(SW),AVG(SW),MAX(SW) FROM data WHERE PW > 0.5 AND  PL > 5.0")
 #dbGetQuery(con, "SELECT AVG(SW) FROM data WHERE PW > 0.5 AND  PL > 5.0")
 
-# joining 2 tables based on some common attribute (e.g. data and speciesID both have a "Species" column)
+# NULL case
+#dbGetQuery(con, "SELECT * FROM data WHERE PL is NULL")
+#dbGetQuery(con, "SELECT * FROM data WHERE PL is not NULL")
+#dbGetQuery(con, "SELECT AVG(PL) FROM data") # avg function ignores nulls
+#dbGetQuery(con, "SELECT AVG(PL) FROM data WHERE PL is not NULL")
+#dbGetQuery(con, "SELECT COUNT(PL) FROM data") # count function does not ignore nulls
+#dbGetQuery(con, "SELECT COUNT(PL) FROM data WHERE PL is not NULL")
+
+# JOIN 2 tables based on some common attribute (e.g. data and speciesID both have a "Species" column)
 #dbGetQuery(con, "SELECT * FROM data INNER JOIN speciesID ON data.Species=speciesID.Species")
 #dbGetQuery(con, "SELECT data.SL,speciesID.sID FROM data INNER JOIN speciesID ON data.Species=speciesID.Species")
 

@@ -223,6 +223,11 @@ corMap = function(corMat, patternMap = c("a","b","c","d","e")){
 #dbGetQuery(con, "SELECT length(Species) FROM data WHERE PW > 0.5") #output length of string
 #dbGetQuery(con, "SELECT Species,PW,PL FROM data WHERE PW < (PL/4)") # selection on compute
 
+# ORDER BY
+#dbGetQuery(con, "SELECT * FROM data WHERE PW > 0.5 ORDER BY PW")
+#dbGetQuery(con, "SELECT * FROM data WHERE PW > 0.5 ORDER BY PW desc")
+#dbGetQuery(con, "SELECT * FROM data WHERE PW > 0.5 ORDER BY species,PW")
+
 # NULL case
 #dbGetQuery(con, "SELECT * FROM data WHERE PL is NULL")
 #dbGetQuery(con, "SELECT * FROM data WHERE PL is not NULL")

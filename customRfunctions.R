@@ -209,6 +209,7 @@ corMap = function(corMat, patternMap = c("a","b","c","d","e")){
 # AND / OR
 #dbGetQuery(con, "SELECT * FROM data WHERE PW > 0.5 OR  PL > 5.0")
 #dbGetQuery(con, "SELECT * FROM data WHERE PW > 0.5 AND  PL > 5.0")
+#dbGetQuery(con, "SELECT * FROM data WHERE (PW > 0.5 AND PL < 5.0) OR (PW <= 0.5 AND PL >= 5.0) ") #XOR case
 #dbGetQuery(con, "SELECT * FROM data WHERE PW BETWEEN 0.5 AND 1.0") # inclusive
 #dbGetQuery(con, "SELECT * FROM data WHERE Species LIKE 's%' OR Species LIKE 'v%' ")
 

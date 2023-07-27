@@ -242,6 +242,9 @@ corMap = function(corMat, patternMap = c("a","b","c","d","e")){
 #dbGetQuery(con, "SELECT * FROM data INNER JOIN speciesID ON data.Species=speciesID.Species")
 #dbGetQuery(con, "SELECT data.SL,speciesID.sID FROM data INNER JOIN speciesID ON data.Species=speciesID.Species")
 
+# SQL complex math (temporary variables) without importing into R (https://www.programiz.com/sql/online-compiler/)
+## SELECT VARA / (SELECT COUNT(first_name) FROM Customers WHERE country is 'USA') FROM (SELECT CAST(COUNT(first_name) AS float) AS VARA FROM Customers WHERE age > 25 AND country is 'USA')
+
 # End
 #dbDisconnect(con)
 
